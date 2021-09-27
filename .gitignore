@@ -1,0 +1,5 @@
+__pycache__/
+*.buf
+*.pyc
+.DS_Store
+latest_*
