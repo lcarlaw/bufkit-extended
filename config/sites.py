@@ -26,6 +26,6 @@ IDS = [
     'karr',
     'klot',
     'kvpz',
-    'p#b',
+    'p%23b',
     'paxt',
 ]
