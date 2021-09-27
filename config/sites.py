@@ -21,5 +21,3 @@ IDS = [
     'klaf',
     'kvpz'
 ]
-
-#IDS = ['kord']
