@@ -17,7 +17,15 @@ IDS = [
     'kmgc',
     'brhr',
     'lm2',
+    'lm3',
     'kcgx',
     'klaf',
-    'kvpz'
+    'kvpz',
+    '3ck',
+    'kdkb',
+    'karr',
+    'klot',
+    'kvpz',
+    'p#b',
+    'paxt',
 ]
