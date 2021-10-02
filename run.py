@@ -76,10 +76,10 @@ def download_bufkit(model='RAP', num_procs=1):
                     urls.append(url_2)
                     log.info("Good secondary URL status for: %s" % (id))
 
-            # Write information about the latest long term run to the local filesystem
-            if status is not None:
-                with open("%s/latest_%s.txt" % (curr_pwd, model.lower()), 'w') as f:
-                    f.write(target_cycle.strftime('%Y%m%d%H'))
+        # Write information about the latest long term run to the local filesystem
+        if status is not None:
+            with open("%s/latest_%s.txt" % (curr_pwd, model.lower()), 'w') as f:
+                f.write(target_cycle.strftime('%Y%m%d%H'))
 
         # Send to processing pool for downloading.
         pool = Pool(num_procs)
