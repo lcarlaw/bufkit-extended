@@ -1,0 +1,10 @@
+__pycache__/
+*.buf
+*.pyc
+*.bat
+*.txt
+.DS_Store
+latest_*
+/data/
+/logs/
+
