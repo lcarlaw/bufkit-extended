@@ -6,8 +6,6 @@
 ##########################################################################################
 LOG_DIR = "/Users/leecarlaw/scripts/bufkit-extended/logs"            # Log file location
 DATA_DIR = "/Users/leecarlaw/scripts/bufkit-extended/data"           # BUFKIT data location
-#LOG_DIR = "N:/bufkit-extended/logs"
-#DATA_DIR = "V:/bufkit"
 
 ##########################################################################################
 # Static configurations. Generally do not edit.
