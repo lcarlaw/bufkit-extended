@@ -51,27 +51,55 @@ def download_bufkit(model='RAP', num_threads=20):
     # Vanguard site to test latest available model cycle and set the download source
     log.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     log.info("Determining download source")
-    source = "PSU"
-    log.info(f"Testing the {source} datafeed and looking for latest available run")
-    latest_cycle = read_header(QUERY_URL[model][source], current_time)
-    if latest_cycle is None: 
-        source = "IEM"
-        log.info(f"Testing the {source} datafeed")
-        latest_cycle = read_header(QUERY_URL[model][source], current_time)
+    log.info(f"Testing the PSU datafeed and looking for latest available run")
+    latest_cycle_psu = read_header(QUERY_URL[model]['PSU'], current_time)
+    log.info(f"Latest PSU cycle: {latest_cycle_psu}")
+
+    log.info(f"Testing the IEM datafeed and looking for latest available run")
+    latest_cycle_iem = read_header(QUERY_URL[model]['IEM'], current_time)
+    log.info(f"Latest IEM cycle: {latest_cycle_iem}")
+
+    # Test both the PSU and IEM datafeeds for existence of the closest target extended 
+    # datafiles
+    latest_extended_psu = None 
+    latest_extended_iem = None
+    if latest_cycle_psu is not None:
+        latest_extended_psu = find_closest_cycle(latest_cycle_psu, extended_cycles)
+        url = make_url('PSU', model, latest_extended_psu, 'kord')
+        latest_extended_psu = read_header(url, current_time)
+    if latest_cycle_iem is not None:
+        latest_extended_iem = find_closest_cycle(latest_cycle_iem, extended_cycles)
+        url = make_url('IEM', model, latest_extended_iem, 'kord')
+        latest_extended_iem = read_header(url, current_time)
+        
+    # Both sites return good status
+    if latest_extended_psu is not None and latest_extended_iem is not None: 
+        latest_cycle, source = latest_extended_psu, "PSU"
+        if latest_extended_iem > latest_extended_psu:
+            latest_cycle, source = latest_extended_iem, "IEM"
     
-    if latest_cycle is not None:
-        log.info(f"Latest available {model} cycle: {latest_cycle} from {source}")
+    # PSU returns bad status
+    elif latest_extended_psu is None and latest_extended_iem is not None:
+        latest_cycle, source = latest_extended_iem, "IEM"
+    
+    # IEM returns bad status
+    elif latest_extended_psu is not None and latest_extended_iem is None:
+        latest_cycle, source = latest_extended_psu, "PSU"
+    
+    # Both bad status
     else:
         log.error(
-            f"The latest data was either old or there were errors accessing the "
-            f"datafeeds for both the IEM and PSU sources. Script will exit now. "
-            f"Sorry. NO BUFKIT DATA FOR YOU!"
+            f"Unable to access both the IEM nad PSU datafeeds. "
+            f"Script will exit now. Sorry. NO BUFKIT DATA FOR YOU!"
         )
         sys.exit(1)
-
+    
+    ####################################################################################
+    # Begin download process
+    ####################################################################################
     # Determine the closest extended run and check to see if this exists locally
     target_cycle = find_closest_cycle(latest_cycle, extended_cycles)
-    log.info(f"target_cycle extended cycle is: {target_cycle}")
+    log.info(f"target_cycle extended cycle is: {target_cycle} from: {source}")
     download_flag = True
 
     latest_file = f"{curr_pwd}/latest_{model}.txt"
@@ -84,6 +112,7 @@ def download_bufkit(model='RAP', num_threads=20):
     else: 
         log.info(f"latest_{model} file not found. Continuing with download")
 
+    '''
     # Check which source (if any) has the desired extended model cycle.
     if download_flag:
         if latest_cycle != target_cycle:
@@ -105,6 +134,7 @@ def download_bufkit(model='RAP', num_threads=20):
                 log.error(f"[BAD] status for both IEM & PSU sources for {target_cycle}")
                 log.error("Scripts exiting in error.")
                 sys.exit(1)
+    '''
     log.info("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 
     urls = []
