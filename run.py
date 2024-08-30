@@ -53,11 +53,11 @@ def download_bufkit(model='RAP', num_threads=20):
     log.info("Determining download source")
     log.info(f"Testing the PSU datafeed and looking for latest available run")
     latest_cycle_psu = read_header(QUERY_URL[model]['PSU'], current_time)
-    log.info(f"Latest PSU cycle: {latest_cycle_psu}")
+    log.info(f"--> Latest PSU cycle: {latest_cycle_psu}")
 
     log.info(f"Testing the IEM datafeed and looking for latest available run")
     latest_cycle_iem = read_header(QUERY_URL[model]['IEM'], current_time)
-    log.info(f"Latest IEM cycle: {latest_cycle_iem}")
+    log.info(f"--> Latest IEM cycle: {latest_cycle_iem}")
 
     # Test both the PSU and IEM datafeeds for existence of the closest target extended 
     # datafiles
@@ -67,10 +67,12 @@ def download_bufkit(model='RAP', num_threads=20):
         latest_extended_psu = find_closest_cycle(latest_cycle_psu, extended_cycles)
         url = make_url('PSU', model, latest_extended_psu, 'kord')
         latest_extended_psu = read_header(url, current_time)
+        log.info(f"--> Latest extended PSU cycle: {latest_extended_psu}")
     if latest_cycle_iem is not None:
         latest_extended_iem = find_closest_cycle(latest_cycle_iem, extended_cycles)
         url = make_url('IEM', model, latest_extended_iem, 'kord')
         latest_extended_iem = read_header(url, current_time)
+        log.info(f"--> Latest extended IEM cycle: {latest_extended_iem}")
         
     # Both sites return good status
     if latest_extended_psu is not None and latest_extended_iem is not None: 
@@ -89,7 +91,7 @@ def download_bufkit(model='RAP', num_threads=20):
     # Both bad status
     else:
         log.error(
-            f"Unable to access both the IEM nad PSU datafeeds. "
+            f"Unable to access *both* the IEM and PSU datafeeds. "
             f"Script will exit now. Sorry. NO BUFKIT DATA FOR YOU!"
         )
         sys.exit(1)
